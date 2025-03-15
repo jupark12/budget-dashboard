@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
+import TransactionList from "~/components/transactions";
 
 export default function Home() {
   return (
@@ -38,6 +39,7 @@ export default function Home() {
               </div>
             </Link>
           </div>
+          <TransactionList />
         </div>
       </main>
     </>
