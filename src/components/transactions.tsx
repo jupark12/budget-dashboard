@@ -57,8 +57,12 @@ const TransactionList: React.FC = () => {
     return <Typography color="error">{error}</Typography>;
   }
 
-  if (transactions.length === 0) {
-    return <Typography>No transactions found.</Typography>;
+  if (transactions === null || (transactions.length === 0) ) {
+    return (
+        <Paper elevation={3} sx={{ p: 2, maxHeight: '500px', overflow: 'auto' }}>
+            <Typography>No transactions found.</Typography>
+        </Paper>
+    );
   }
 
   return (
@@ -67,7 +71,7 @@ const TransactionList: React.FC = () => {
         Recent Transactions
       </Typography>
       <List>
-        {transactions.map((transaction, index) => (
+        {transactions && transactions.map((transaction, index) => (
           <React.Fragment key={transaction.id}>
             {index > 0 && <Divider />}
             <ListItem sx={{ py: 2 }}>
