@@ -4,6 +4,8 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useJobContext } from '~/context/JobContext';
+import { GeistSans } from 'geist/font/sans';
+import { Gesture } from '@mui/icons-material';
 
 interface Transaction {
   id: number;
@@ -23,16 +25,16 @@ const TransactionList: React.FC = () => {
   const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [jobDeleteDialogOpen, setJobDeleteDialogOpen] = useState(false);
-  
+
   const fetchTransactions = async () => {
     try {
       setLoading(true);
       const response = await fetch('http://localhost:8050/transactions');
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       setTransactions(data);
       setError(null);
@@ -43,7 +45,7 @@ const TransactionList: React.FC = () => {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     fetchTransactions();
   }, []);
@@ -77,22 +79,22 @@ const TransactionList: React.FC = () => {
 
   const handleConfirmDelete = async () => {
     if (!transactionToDelete) return;
-    
+
     setIsDeleting(true);
-    
+
     try {
       const response = await fetch(`http://localhost:8050/transactions/${transactionToDelete.id}`, {
         method: 'DELETE',
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      
+
       // Remove the deleted transaction from the state
       setTransactions(transactions.filter(t => t.id !== transactionToDelete.id));
       handleCloseDialog();
-      
+
     } catch (err) {
       console.error('Error deleting transaction:', err);
       setError('Failed to delete transaction. Please try again later.');
@@ -112,20 +114,20 @@ const TransactionList: React.FC = () => {
 
   const handleConfirmJobDelete = async () => {
     setIsDeleting(true);
-    
+
     try {
       const response = await fetch('http://localhost:8050/jobs/most-recent', {
         method: 'DELETE',
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      
+
       // Refresh transactions after deleting the job
       fetchTransactions();
       handleCloseJobDialog();
-      
+
     } catch (err) {
       console.error('Error deleting most recent job:', err);
       setError('Failed to delete most recent job. Please try again later.');
@@ -135,30 +137,30 @@ const TransactionList: React.FC = () => {
   };
 
   if (loading) {
-    return <Typography>Loading transactions...</Typography>;
+    return (
+      <></>
+    );
   }
 
   if (error) {
     return <Typography color="error">{error}</Typography>;
   }
 
-  if (transactions === null || (transactions.length === 0) ) {
+  if (transactions === null || (transactions.length === 0)) {
     return (
-        <Paper elevation={3} sx={{ p: 2, maxHeight: '500px', overflow: 'auto' }}>
-            <Typography>No transactions found.</Typography>
-        </Paper>
+      <></>
     );
   }
 
   return (
-    <Paper elevation={3} sx={{ p: 2, maxHeight: '500px', overflow: 'auto' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h5">
+    <>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, width: '100%', maxWidth: '1026px' }}>
+        <p className={GeistSans.className + " font-bold text-3xl"}>
           Recent Transactions
-        </Typography>
-        <Button 
-          variant="outlined" 
-          color="error" 
+        </p>
+        <Button
+          variant="outlined"
+          color="error"
           startIcon={<DeleteIcon />}
           onClick={handleDeleteMostRecentJob}
           size="small"
@@ -166,14 +168,18 @@ const TransactionList: React.FC = () => {
           Delete Most Recent Job
         </Button>
       </Box>
-      
-      <List>
+
+      <List sx={{ width: '100%', maxWidth: '1026px' }}>
         {transactions && transactions.map((transaction, index) => (
           <React.Fragment key={transaction.id}>
-            {index > 0 && <Divider />}
-            <ListItem 
-              sx={{ py: 2 }} 
-              className="transform transition-all duration-500 ease-out opacity-0 translate-y-4 animate-slide-in" 
+            <ListItem
+              sx={{
+                py: 2,
+                backgroundColor: index % 2 === 0 ? '#f5f5f5' : 'transparent',
+                borderRadius: 1,
+                mb: 1
+              }}
+              className="transform transition-all duration-500 ease-out opacity-0 translate-y-4 animate-slide-in"
               style={{ animationDelay: `${Math.log(index + 1) * 300}ms` }}
               secondaryAction={
                 <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteClick(transaction)}>
@@ -189,14 +195,14 @@ const TransactionList: React.FC = () => {
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Typography 
-                    variant="subtitle1" 
+                  <Typography
+                    variant="subtitle1"
                     color={transaction.type === 'credit' ? 'success.main' : 'error.main'}
                     sx={{ fontWeight: 'bold', mr: 1 }}
                   >
                     {formatCurrency(transaction.amount)}
                   </Typography>
-                  <Chip 
+                  <Chip
                     icon={transaction.type === 'credit' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
                     label={transaction.type === 'credit' ? 'Credit' : 'Debit'}
                     color={transaction.type === 'credit' ? 'success' : 'error'}
@@ -229,9 +235,9 @@ const TransactionList: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog} disabled={isDeleting}>Cancel</Button>
-          <Button 
-            onClick={handleConfirmDelete} 
-            color="error" 
+          <Button
+            onClick={handleConfirmDelete}
+            color="error"
             disabled={isDeleting}
           >
             {isDeleting ? 'Deleting...' : 'Delete'}
@@ -253,16 +259,16 @@ const TransactionList: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseJobDialog} disabled={isDeleting}>Cancel</Button>
-          <Button 
-            onClick={handleConfirmJobDelete} 
-            color="error" 
+          <Button
+            onClick={handleConfirmJobDelete}
+            color="error"
             disabled={isDeleting}
           >
             {isDeleting ? 'Deleting...' : 'Delete'}
           </Button>
         </DialogActions>
       </Dialog>
-    </Paper>
+    </>
   );
 };
 

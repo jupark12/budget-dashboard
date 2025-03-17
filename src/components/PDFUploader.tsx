@@ -123,89 +123,84 @@ const PDFUploader: React.FC = () => {
 
   return (
     <>
-      <Paper
-        elevation={3}
-        sx={{ p: 3, mb: 3 }}
+      <Box
+        sx={{
+          border: '2px dashed',
+          borderColor: isDragActive ? 'primary.main' : 'grey.400',
+          borderRadius: 2,
+          p: 4,
+          mb: 3,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: isDragActive ? 'rgba(25, 118, 210, 0.04)' : 'transparent',
+          transition: 'all 0.2s ease',
+          cursor: 'pointer',
+          minHeight: 200,
+        }}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        onClick={() => document.getElementById('pdf-upload')?.click()}
       >
-        <Typography variant="h5" gutterBottom>
-          Upload Bank Statement
+        <CloudUploadIcon sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
+        <Typography variant="h6" align="center" gutterBottom>
+          Drag and drop PDF bank statements
         </Typography>
+        <Typography variant="body2" align="center" color="text.secondary">
+          or click to browse files
+        </Typography>
+        <input
+          id="pdf-upload"
+          type="file"
+          accept=".pdf"
+          hidden
+          onChange={handleFileChange}
+        />
 
-        <Box
-          sx={{
-            border: '2px dashed',
-            borderColor: isDragActive ? 'primary.main' : 'grey.400',
-            borderRadius: 2,
-            p: 4,
-            mb: 3,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: isDragActive ? 'rgba(25, 118, 210, 0.04)' : 'transparent',
-            transition: 'all 0.2s ease',
-            cursor: 'pointer',
-            minHeight: 200,
-          }}
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-          onClick={() => document.getElementById('pdf-upload')?.click()}
-        >
-          <CloudUploadIcon sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
-          <Typography variant="h6" align="center" gutterBottom>
-            Drag and drop PDF bank statements
-          </Typography>
-          <Typography variant="body2" align="center" color="text.secondary">
-            or click to browse files
-          </Typography>
-          <input
-            id="pdf-upload"
-            type="file"
-            accept=".pdf"
-            hidden
-            onChange={handleFileChange}
-          />
-
-          {selectedFile && (
-            <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-              <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                Selected:
-              </Typography>
-              <Typography variant="body2" sx={{ ml: 1 }}>
-                {selectedFile.name}
-              </Typography>
-            </Box>
-          )}
-        </Box>
-
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleUpload}
-            disabled={!selectedFile || uploading}
-            sx={{ minWidth: 120 }}
-          >
-            {uploading ? <CircularProgress size={24} /> : 'Process PDF'}
-          </Button>
-        </Box>
-
-        {error && (
-          <Typography color="error" sx={{ mt: 2, textAlign: 'center' }}>
-            {error}
-          </Typography>
+        {selectedFile ? (
+          <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+              Selected:
+            </Typography>
+            <Typography variant="body2" sx={{ ml: 1 }}>
+              {selectedFile.name}
+            </Typography>
+          </Box>
+        ) : (
+          <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', visibility: 'hidden' }}>
+            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+              No file selected
+            </Typography>
+          </Box>
         )}
+      </Box>
 
+      <Box sx={{ display: 'flex', justifyContent: 'center', flexFlow: 'column' }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleUpload}
+          disabled={!selectedFile || uploading}
+          sx={{ minWidth: 120 }}
+        >
+          {uploading ? <CircularProgress size={24} /> : 'Process PDF'}
+        </Button>
         {/* Progress indicator */}
         {isProcessing && (
           <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <CircularProgress size={24} sx={{ mr: 1 }} />
-            <Typography variant="body2">Processing your statement...</Typography>
           </Box>
         )}
-      </Paper>
+      </Box>
+
+      {error && (
+        <Typography color="error" sx={{ mt: 2, textAlign: 'center' }}>
+          {error}
+        </Typography>
+      )}
     </>
   );
 };
