@@ -1,4 +1,5 @@
 import React from 'react';
+import Chart from '~/components/Chart';
 import PDFUploader from '~/components/PDFUploader';
 import SummaryCard from '~/components/SummaryCard';
 import TransactionList from '~/components/transactions';
@@ -19,7 +20,6 @@ const Dashboard: React.FC = () => {
                 <SummaryCard title='EXPENSES' number={formatCurrency(totalExpenses)} bgColor='bg-gradient-to-b from-[#BE123C] to-[#E11D48]' />
                 <SummaryCard title='BALANCE' number={formatCurrency(totalBalance)} bgColor='bg-gradient-to-b from-[#047857] to-[#10B981]' />
             </div>
-            <PDFUploader />
             <TransactionList />
         </>
     )

@@ -38,9 +38,12 @@ const PDFUploader: React.FC = () => {
     }
   }, [progress]);
 
+  // Modified to trigger upload immediately after file selection
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0 && event.target.files[0]) {
-      setSelectedFile(event.target.files[0]);
+      const file = event.target.files[0];
+      setSelectedFile(file);
+      uploadFile(file);
     }
   };
 
@@ -62,6 +65,7 @@ const PDFUploader: React.FC = () => {
     e.stopPropagation();
   }, []);
 
+  // Modified drop handler to upload immediately
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -72,23 +76,20 @@ const PDFUploader: React.FC = () => {
       if (file && file.type === 'application/pdf') {
         setSelectedFile(file);
         setError(null);
+        uploadFile(file);
       } else {
         setError('Please upload a PDF file');
       }
     }
   }, []);
 
-  const handleUpload = async () => {
-    if (!selectedFile) {
-      setError('Please select a file first');
-      return;
-    }
-
+  // New function to handle file upload
+  const uploadFile = async (file: File) => {
     setUploading(true);
     setError(null);
 
     const formData = new FormData();
-    formData.append('pdfFile', selectedFile);
+    formData.append('pdfFile', file);
 
     try {
       const response = await fetch('http://localhost:8080/jobs', {
@@ -105,38 +106,45 @@ const PDFUploader: React.FC = () => {
       const result = await response.json();
       console.log('Upload successful:', result);
 
-      // Clear selected file after successful upload
-      setSelectedFile(null);
-
-      // Reset file input
-      const fileInput = document.getElementById('pdf-upload') as HTMLInputElement;
-      if (fileInput) fileInput.value = '';
+      // We don't clear the selected file immediately to show the user what was uploaded
+      // It will be cleared when a new file is selected or when processing completes
 
     } catch (err) {
       console.error('Error uploading file:', err);
       setError('Failed to upload file');
+      setSelectedFile(null);
     } finally {
       setUploading(false);
     }
   };
 
+  // Clear selected file when processing completes
+  useEffect(() => {
+    if (progress === "completed") {
+      setSelectedFile(null);
+      const fileInput = document.getElementById('pdf-upload') as HTMLInputElement;
+      if (fileInput) fileInput.value = '';
+    }
+  }, [progress]);
+
   return (
     <>
-      <div className='flex'>
+      <div className='flex w-full max-w-[1026px] justify-center'>
         <Box
           sx={{
             border: '2px dashed',
-            borderColor: isDragActive ? 'primary.main' : 'grey.400',
-            borderRadius: 2,
+            borderColor: 'rgba(255, 255, 255, 0.5)',
+            borderRadius: 100,
             p: 4,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: isDragActive ? 'rgba(25, 118, 210, 0.04)' : 'transparent',
             transition: 'all 0.2s ease',
             cursor: 'pointer',
             minHeight: 200,
+            width: '80%',
+            height: '200px',
           }}
           onDragEnter={handleDragEnter}
           onDragLeave={handleDragLeave}
@@ -144,13 +152,22 @@ const PDFUploader: React.FC = () => {
           onDrop={handleDrop}
           onClick={() => document.getElementById('pdf-upload')?.click()}
         >
-          <CloudUploadIcon sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
-          <Typography variant="h6" align="center" gutterBottom>
-            Drag and drop PDF bank statements
-          </Typography>
-          <Typography variant="body2" align="center" color="text.secondary">
-            or click to browse files
-          </Typography>
+          {isProcessing ? (
+            <>
+              <CircularProgress size={60} sx={{ mb: 2 }} />
+            </>
+          ) : (
+            <>
+              <CloudUploadIcon sx={{ fontSize: 60, color: 'rgba(255, 255, 255, 0.5)', mb: 2 }} />
+              <Typography className='text-white' align="center" gutterBottom>
+                Drop PDF file
+              </Typography>
+              <Typography variant="body2" align="center" color="white">
+                or click to browse
+              </Typography>
+            </>
+          )}
+
           <input
             id="pdf-upload"
             type="file"
@@ -159,44 +176,21 @@ const PDFUploader: React.FC = () => {
             onChange={handleFileChange}
           />
 
-          {selectedFile ? (
+          {selectedFile && (
             <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-              <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                Selected:
-              </Typography>
-              <Typography variant="body2" sx={{ ml: 1 }}>
+              <Typography variant="body2" sx={{ ml: 1, color: 'white' }}>
                 {selectedFile.name}
-              </Typography>
-            </Box>
-          ) : (
-            <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', visibility: 'hidden' }}>
-              <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                No file selected
               </Typography>
             </Box>
           )}
         </Box>
-      </div >
+      </div>
 
-      <Box sx={{ display: 'flex', justifyContent: 'center', flexFlow: 'row', alignItems: 'center' }}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleUpload}
-          disabled={!selectedFile || uploading}
-          sx={{ minWidth: 120 }}
-        >
-          {isProcessing ? <CircularProgress size={24} /> : 'Process PDF'}
-        </Button>
-      </Box>
-
-      {
-        error && (
-          <Typography color="error" sx={{ mt: 2, textAlign: 'center' }}>
-            {error}
-          </Typography>
-        )
-      }
+      {error && (
+        <Typography color="error" sx={{ mt: 2, textAlign: 'center' }}>
+          {error}
+        </Typography>
+      )}
     </>
   );
 };

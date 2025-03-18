@@ -2,6 +2,7 @@ import Head from "next/head";
 import { useState } from "react";
 import Sidebar from "~/components/Sidebar";
 import Dashboard from "~/pages/dashboard";
+import Analytics from "~/pages/analytics";
 
 export default function Home() {
   // State to track the active page
@@ -17,6 +18,8 @@ export default function Home() {
     switch (activePage) {
       case 'dashboard':
         return <Dashboard />;
+      case 'analytics':
+        return <Analytics />;
       // case 'settings':
       //   return <Settings />;
       default:

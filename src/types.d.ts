@@ -1,5 +1,5 @@
 // Define types first
-type Page = 'dashboard' | 'settings';
+type Page = 'dashboard' | 'settings' | 'analytics';
 
 interface Transaction {
     id: number;
