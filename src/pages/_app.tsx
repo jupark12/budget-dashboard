@@ -1,6 +1,6 @@
 import { GeistSans } from "geist/font/sans";
 import { type AppType } from "next/app";
-import { JobProvider } from "~/context/JobContext";
+import { JobProvider } from "~/context/GlobalContext";
 
 import "~/styles/globals.css";
 

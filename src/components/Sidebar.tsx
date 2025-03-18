@@ -22,12 +22,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onPageChange, activePage }) => {
   ];
 
   return (
-    <div className="sidebar" style={{
-      width: '300px',
-      height: '100%',
-      backgroundColor: '#f8fafc',
-      padding: '30px 0',
-    }}>
+    <div className="sidebar w-[300px] min-h-screen py-4 bg-gradient-to-b from-[#312E81] to-[#4338CA]">
+      <div>
+        <h1 className="text-white text-2xl font-bold text-center mb-4">Budget Project</h1>
+      </div>
       {menuItems.map((item) => (
         <div
           key={item.id}
@@ -38,12 +36,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onPageChange, activePage }) => {
             margin: '5px 10px',
             borderRadius: '5px',
             cursor: 'pointer',
-            backgroundColor: activePage === item.id ? '#4f46e5' : 'transparent',
-            color: activePage === item.id ? 'white' : '#475569',
+            backgroundColor: activePage === item.id ? 'rgba(255, 255, 255, 0.5)' : 'transparent',
+            color: activePage === item.id ? 'white' : 'white',
             fontFamily: 'Arial, sans-serif',
             fontSize: '14px',
             fontWeight: activePage === item.id ? 'bold' : 'normal',
-            transition: 'all 0.2s ease'
+            transition: 'all .3s ease'
           }}
         >
           {item.label}

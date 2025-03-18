@@ -3,68 +3,24 @@ import { Box, List, ListItem, Typography, Paper, Divider, Chip, Button, IconButt
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useJobContext } from '~/context/JobContext';
+import { useGlobalContext } from '~/context/GlobalContext';
 import { GeistSans } from 'geist/font/sans';
-import { Gesture } from '@mui/icons-material';
-
-interface Transaction {
-  id: number;
-  date: string;
-  description: string;
-  amount: number;
-  type: string;
-  created_at: string;
-}
+import { formatCurrency } from '~/util/func';
 
 const TransactionList: React.FC = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const { shouldRefreshTransactions } = useJobContext();
+  const { shouldRefreshTransactions, transactions, refreshTransactions, setTransactions, error, setError } = useGlobalContext();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [jobDeleteDialogOpen, setJobDeleteDialogOpen] = useState(false);
 
-  const fetchTransactions = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('http://localhost:8050/transactions');
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setTransactions(data);
-      setError(null);
-    } catch (err) {
-      setError('Failed to fetch transactions. Please try again later.');
-      console.error('Error fetching transactions:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchTransactions();
-  }, []);
-
   // Refetch transactions when a job completes
   useEffect(() => {
     if (shouldRefreshTransactions) {
       console.log('Job completed, refreshing transactions');
-      fetchTransactions();
+      refreshTransactions();
     }
   }, [shouldRefreshTransactions]);
-
-  // Format currency
-  const formatCurrency = (amount: number): string => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(Math.abs(amount));
-  };
 
   // Handle transaction deletion
   const handleDeleteClick = (transaction: Transaction) => {
@@ -125,7 +81,7 @@ const TransactionList: React.FC = () => {
       }
 
       // Refresh transactions after deleting the job
-      fetchTransactions();
+      refreshTransactions();
       handleCloseJobDialog();
 
     } catch (err) {
@@ -135,12 +91,6 @@ const TransactionList: React.FC = () => {
       setIsDeleting(false);
     }
   };
-
-  if (loading) {
-    return (
-      <></>
-    );
-  }
 
   if (error) {
     return <Typography color="error">{error}</Typography>;
@@ -169,7 +119,7 @@ const TransactionList: React.FC = () => {
         </Button>
       </Box>
 
-      <List sx={{ width: '100%', maxWidth: '1026px' }}>
+      <List sx={{ width: '100%', maxWidth: '1026px', maxHeight: '530px', overflowY: 'auto' }}>
         {transactions && transactions.map((transaction, index) => (
           <React.Fragment key={transaction.id}>
             <ListItem
