@@ -56,6 +56,7 @@ const TransactionList: React.FC = () => {
       setError('Failed to delete transaction. Please try again later.');
     } finally {
       setIsDeleting(false);
+      refreshTransactions();
     }
   };
 

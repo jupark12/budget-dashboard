@@ -43,7 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onPageChange, activePage }) => {
             fontFamily: 'Arial, sans-serif',
             fontSize: '14px',
             fontWeight: activePage === item.id ? 'bold' : 'normal',
-            transition: 'all .3s ease'
+            transition: 'all .2s ease-in-out'
           }}
         >
           {item.label}
