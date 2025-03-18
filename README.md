@@ -1,29 +1,37 @@
-# Create T3 App
+# Budget Project
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+Frontend was spinned up with T3 stack, just using React Typescript, Material-UI, and Tailwind. The dashboard is simply made to extract transaction data from my Bank of America bank statements pdf files.
 
-## What's next? How do I make an app with this?
+## Project Structure
+The project consists of three main components:
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+1. Budget Dashboard (Frontend): React/TypeScript application with Material UI
+2. [Transaction API](https://github.com/jupark12/transaction-api) : Backend service for managing transaction data
+3. [Go Job Queue](https://github.com/jupark12/go-job-queue) : Background processing system for handling time-consuming tasks like extracting transaction data from pdfs
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+### Backend (Transaction API)
+- RESTful API : Standard HTTP methods for CRUD operations
+- Transaction Processing : Handling financial data with proper validation
+- Error Handling : Robust error responses for client feedback
+### Background Processing (Go Job Queue)
+- Job Queue Pattern : Offloading time-consuming tasks to background workers
+- Concurrency : Parallel processing of multiple jobs
+- State Management : Tracking job status and progress
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+## Implementation Highlights
+- Real-time Updates : The frontend refreshes transaction data when background jobs complete, using a websocket
+- Optimistic UI : Interface updates immediately before server confirmation
+- Modular Architecture : Clean separation of concerns between components
 
-## Learn More
+## Getting Started
+1. Start the [Go Job Queue](https://github.com/jupark12/go-job-queue) service
+2. Launch the [Transaction API](https://github.com/jupark12/transaction-api)
+3. Run the Budget Dashboard frontend
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+```bash
+npm install
+npm run dev
+```
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+## Demo
+[Budget Project.webm](https://github.com/user-attachments/assets/253f0488-b2a5-468a-a044-34cdf2639643)
