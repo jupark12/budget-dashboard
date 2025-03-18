@@ -20,7 +20,7 @@ const Analytics: React.FC = () => {
                 <SummaryCard title='BALANCE' number={formatCurrency(totalBalance)} bgColor='bg-gradient-to-b from-[#047857] to-[#10B981]' />
             </div>
 
-            <Chart numMonths={5} />
+            <Chart numMonths={3} />
 
             <div className='w-full max-w-[1026px] mt-8'>
                 <h2 className='text-2xl font-bold mb-4'>Transaction Insights</h2>

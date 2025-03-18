@@ -8,7 +8,7 @@ interface SummaryCardProps {
 
 const SummaryCard: React.FC<SummaryCardProps> = ({ title, number, bgColor }) => {
     return (
-        <div className={bgColor + " rounded-2xl shadow-md p-6 text-white w-[200px] flex-1"}>
+        <div className={bgColor + " rounded-2xl shadow-lg p-6 text-white w-[200px] flex-1"}>
             <h2 className="text-l font-semibold mb-4">
                 {title}
             </h2>
